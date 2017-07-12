@@ -50,7 +50,7 @@ public interface AbstractProcess extends DescribedObject
     /**
      * Gets the configuration property
      */
-    public AbstractSettings getConfiguration();
+    public Settings getConfiguration();
     
     
     /**
@@ -62,7 +62,7 @@ public interface AbstractProcess extends DescribedObject
     /**
      * Sets the configuration property
      */
-    public void setConfiguration(AbstractSettings configuration);
+    public void setConfiguration(Settings configuration);
     
     
     /**
@@ -243,10 +243,4 @@ public interface AbstractProcess extends DescribedObject
      * Sets the definition property
      */
     public void setDefinition(String definition);
-    
-    
-    /**
-     * Checks if the process is executable
-     */
-    public boolean isExecutable();
 }
