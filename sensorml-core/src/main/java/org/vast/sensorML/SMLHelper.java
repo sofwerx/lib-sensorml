@@ -23,6 +23,7 @@ import org.vast.util.Asserts;
 import net.opengis.OgcPropertyList;
 import net.opengis.sensorml.v20.AbstractProcess;
 import net.opengis.sensorml.v20.AggregateProcess;
+import net.opengis.sensorml.v20.ClassifierList;
 import net.opengis.sensorml.v20.DataInterface;
 import net.opengis.sensorml.v20.IdentifierList;
 import net.opengis.sensorml.v20.PhysicalComponent;
@@ -46,6 +47,10 @@ import net.opengis.swe.v20.DataStream;
  */
 public class SMLHelper extends SMLFactory
 {
+    private static final String ARG_LABEL = "label";
+    private static final String ARG_DEF = "definition";
+    private static final String ARG_VALUE = "value";
+    
     public static final String LONG_NAME_DEF = SWEHelper.getPropertyUri("LongName");
     public static final String LONG_NAME_LABEL = "Long Name";
     public static final String SHORT_NAME_DEF = SWEHelper.getPropertyUri("ShortName");
@@ -106,14 +111,9 @@ public class SMLHelper extends SMLFactory
     }
     
     
-    public static SMLHelper edit(AbstractProcess process)
+    public SMLHelper(AbstractProcess process)
     {
-        return new SMLHelper(process);
-    }
-    
-    
-    protected SMLHelper(AbstractProcess process)
-    {
+        Asserts.checkNotNull(process, AbstractProcess.class);        
         this.process = process;
     }
     
@@ -126,7 +126,9 @@ public class SMLHelper extends SMLFactory
     
     public void addIdentifier(String label, String def, String value)
     {
-        Asserts.checkNotNull(process);
+        Asserts.checkNotNull(def, ARG_LABEL);
+        Asserts.checkNotNull(def, ARG_DEF);
+        Asserts.checkNotNull(value, ARG_VALUE);
         
         // ensure we have an identification section
         OgcPropertyList<IdentifierList> sectionList = process.getIdentificationList();
@@ -144,6 +146,32 @@ public class SMLHelper extends SMLFactory
         term.setLabel(label);
         term.setValue(value);
         idList.addIdentifier(term);
+    }
+    
+    
+    public void addClassifier(String label, String def, String codeSpace, String value)
+    {
+        Asserts.checkNotNull(def, ARG_LABEL);
+        Asserts.checkNotNull(def, ARG_DEF);
+        Asserts.checkNotNull(value, ARG_VALUE);
+        
+        // ensure we have an identification section
+        OgcPropertyList<ClassifierList> sectionList = process.getClassificationList();
+        ClassifierList metadataList;
+        if (sectionList.isEmpty())
+        {
+            metadataList = newClassifierList();
+            sectionList.add(metadataList);
+        }
+        else
+            metadataList = sectionList.get(0);
+        
+        Term term = newTerm();
+        term.setDefinition(def);
+        term.setLabel(label);
+        term.setCodeSpace(codeSpace);
+        term.setValue(value);
+        metadataList.addClassifier(term);
     }
     
     
